@@ -1,0 +1,118 @@
+{% extends "admin_base.html" %}
+{% block title %}Edit Booking #{{ booking.id }} — Studio Dashboard{% endblock %}
+{% block admin_content %}
+
+<div class="admin-edit-window">
+  <div class="admin-edit-header-bar">
+    <div class="admin-edit-heading-left">
+      <a href="{{ url_for('admin_bookings') }}" class="admin-back-link" title="Back to bookings">
+        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        <span>Bookings</span>
+      </a>
+      <h2 class="admin-edit-title">Edit booking #{{ booking.id }}</h2>
+      <span class="status-pill status-{{ booking.status }}">{{ booking.status }}</span>
+    </div>
+    
+    <div class="admin-edit-meta-pill">
+      <span>Service: <strong>{{ booking.service_name }}</strong></span>
+      {% if booking.created_at %}
+      <span class="meta-separator">&middot;</span>
+      <span>Received: <strong>{{ booking.created_at.strftime('%d %b %Y') }}</strong></span>
+      {% endif %}
+    </div>
+  </div>
+
+  <form class="admin-edit-form-card" method="POST" action="{{ url_for('admin_edit_booking', booking_id=booking.id) }}">
+    <div class="admin-edit-columns">
+      
+      <!-- Left Column: Client Contact & Package -->
+      <div class="admin-edit-col">
+        <h4 class="admin-col-subheading">Client Information</h4>
+
+        <div class="field">
+          <label for="client_name">Client name</label>
+          <input type="text" id="client_name" name="client_name" value="{{ booking.client_name }}" required>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="phone">Phone number</label>
+            <input type="tel" id="phone" name="phone" value="{{ booking.phone }}" required>
+          </div>
+          <div class="field">
+            <label for="email">Email address</label>
+            <input type="email" id="email" name="email" value="{{ booking.email }}" required>
+          </div>
+        </div>
+
+        <div class="field" style="margin-bottom:0;">
+          <label for="service_id">Session type / package</label>
+          <select id="service_id" name="service_id" required>
+            {% for s in services %}
+            <option value="{{ s.id }}" {{ 'selected' if s.id == booking.service_id }}>
+              {{ s.name }} — ₹{{ '{:,}'.format(s.price|int) }} ({{ s.duration }})
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <!-- Right Column: Date, Location, Status & Notes -->
+      <div class="admin-edit-col">
+        <h4 class="admin-col-subheading">Schedule &amp; Logistics</h4>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="shoot_date">Shoot date</label>
+            <input type="date" id="shoot_date" name="shoot_date" value="{{ booking.shoot_date }}" required>
+          </div>
+          <div class="field">
+            <label for="status">Booking status</label>
+            <select id="status" name="status" class="status-select">
+              {% for s in ['Pending', 'Confirmed', 'Completed', 'Cancelled'] %}
+              <option value="{{ s }}" {{ 'selected' if s == booking.status }}>{{ s }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="location">Location / venue in Kerala</label>
+          <input type="text" id="location" name="location" value="{{ booking.location }}" required>
+        </div>
+
+        <div class="field" style="margin-bottom:0;">
+          <label for="message">Notes / special requests</label>
+          <textarea id="message" name="message" rows="2" placeholder="No notes added">{{ booking.message or '' }}</textarea>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom Actions Bar -->
+    <div class="admin-edit-footer-bar">
+      <div class="admin-edit-btns">
+        <button type="submit" class="btn btn-brass">Save changes</button>
+        <a href="{{ url_for('admin_bookings') }}" class="btn btn-ghost">Cancel</a>
+        <button type="button" 
+                class="btn btn-danger btn-sm js-open-delete-modal"
+                style="margin-left: 8px;"
+                data-id="{{ booking.id }}"
+                data-client="{{ booking.client_name }}"
+                data-service="{{ booking.service_name }}"
+                data-date="{{ booking.shoot_date }}"
+                data-url="{{ url_for('admin_delete_booking', booking_id=booking.id) }}">
+          Delete booking
+        </button>
+      </div>
+      <div class="admin-edit-status-hint">
+        <span>Changes update client record and status instantly.</span>
+      </div>
+    </div>
+  </form>
+</div>
+
+{% endblock %}

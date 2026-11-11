@@ -1,0 +1,37 @@
+{% extends "admin_base.html" %}
+{% block title %}Portfolio — Studio Dashboard{% endblock %}
+{% block admin_content %}
+
+<div class="section-head">
+  <div>
+    <h2 style="font-size:1.5rem;">Portfolio</h2>
+    <p>Every published photograph, newest first.</p>
+  </div>
+  <a href="{{ url_for('admin_add_gallery') }}" class="btn btn-brass btn-sm">Add a photograph</a>
+</div>
+
+{% if items %}
+<div class="grid-3">
+  {% for item in items %}
+  <div class="service-card" style="padding:0; overflow:hidden;">
+    <div class="frame" style="aspect-ratio:4/3;">
+      <img src="{{ url_for('static', filename='images/gallery/' ~ item.image_file) }}" alt="{{ item.title }}">
+      <div class="frame-caption">
+        <span class="num">{{ item.category }}</span>
+        <h4>{{ item.title }}</h4>
+      </div>
+    </div>
+    <div style="padding:18px;">
+      <p class="desc" style="margin:0 0 14px; font-size:0.88rem;">{{ item.description or 'No description.' }}</p>
+      <form method="POST" action="{{ url_for('admin_delete_gallery', item_id=item.id) }}" onsubmit="return confirm('Remove &quot;{{ item.title }}&quot; from the portfolio?');">
+        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">No photographs yet. Add the first one.</div>
+{% endif %}
+
+{% endblock %}

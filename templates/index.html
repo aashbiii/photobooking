@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}KuttyStories — Kerala Wedding, Portrait &amp; Cultural Photography{% endblock %}
+{% block content %}
+
+<section class="hero">
+  <div class="hero-inner">
+    <p class="hero-eyebrow">Visual narratives crafted in God's Own Country</p>
+    <h1>Stories of soul, tradition, and timeless light.</h1>
+    <div class="hero-actions">
+      <a href="{{ url_for('book') }}" class="btn btn-brass">Book a session</a>
+      <a href="{{ url_for('gallery') }}" class="btn btn-outline">View the portfolio</a>
+    </div>
+    <div class="hero-meta">
+      <div><strong>Based in</strong><span>Kochi, Kerala — travels worldwide</span></div>
+      <div><strong>Shoots</strong><span>Weddings, portraits, cultural &amp; nature</span></div>
+      <div><strong>Turnaround</strong><span>Hand-graded gallery within 10 days</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <h2>Recent frames</h2>
+        <p>A glimpse into our recent stories across Kerala.</p>
+      </div>
+      <a href="{{ url_for('gallery') }}" class="btn btn-ghost btn-sm">See full portfolio</a>
+    </div>
+
+    {% if featured %}
+    <div class="filmstrip">
+      {% for item in featured %}
+      <a class="frame" href="{{ url_for('gallery') }}?category={{ item.category }}">
+        <img src="{{ url_for('static', filename='images/gallery/' ~ item.image_file) }}" alt="{{ item.title }} — {{ item.category }} photograph" loading="lazy">
+        <div class="frame-caption">
+          <span class="num">{{ item.category }}</span>
+          <h4>{{ item.title }}</h4>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">No portfolio pieces yet.</div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="section-dark">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <h2>Sessions</h2>
+        <p>Three of our most-booked photography experiences in Kerala.</p>
+      </div>
+      <a href="{{ url_for('services') }}" class="btn btn-outline btn-sm">All sessions &amp; pricing</a>
+    </div>
+
+    <div class="grid-3">
+      {% for s in services %}
+      <div class="service-card">
+        <h3 style="font-size:1.25rem;">{{ s.name }}</h3>
+        <div class="price">₹{{ '{:,}'.format(s.price|int) }}</div>
+        <div class="duration">{{ s.duration }}</div>
+        <p class="desc">{{ s.description }}</p>
+        <a href="{{ url_for('book', service_id=s.id) }}" class="btn btn-brass btn-sm" style="margin-top:18px;">Book this</a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container" style="text-align:center;">
+    <h2 style="max-width:24ch; margin:0 auto 18px;">Have a date in mind? Let's hold it for you.</h2>
+    <p style="margin:0 auto 28px; text-align:center;">Booking requests are usually confirmed within 24 hours.</p>
+    <a href="{{ url_for('book') }}" class="btn btn-brass">Start your booking</a>
+  </div>
+</section>
+
+{% endblock %}

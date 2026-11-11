@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}KuttyStories — Kerala Photography &amp; Films{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<header class="site-header">
+  <nav class="nav">
+    <a href="{{ url_for('index') }}" class="brand">Kutty<span class="dot">&middot;</span>Stories</a>
+    <ul class="nav-links">
+      <li><a href="{{ url_for('gallery') }}" class="{{ 'active' if request.endpoint == 'gallery' }}">Portfolio</a></li>
+      <li><a href="{{ url_for('services') }}" class="{{ 'active' if request.endpoint == 'services' }}">Sessions &amp; pricing</a></li>
+      <li><a href="{{ url_for('book') }}" class="btn btn-brass btn-sm">Book a session</a></li>
+    </ul>
+  </nav>
+</header>
+
+<div class="flash-wrap">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+</div>
+
+<main>
+  {% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <h4>KuttyStories</h4>
+        <p style="max-width: 34ch; font-size: 0.92rem;">Authentic Kerala wedding, portrait, and cultural visual narratives — capturing soul, tradition, and timeless light.</p>
+      </div>
+      <div>
+        <h4 style="font-size:0.95rem;">Explore</h4>
+        <ul class="footer-links">
+          <li><a href="{{ url_for('gallery') }}">Portfolio</a></li>
+          <li><a href="{{ url_for('services') }}">Sessions &amp; pricing</a></li>
+          <li><a href="{{ url_for('book') }}">Book a session</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 style="font-size:0.95rem;">Studio</h4>
+        <ul class="footer-links">
+          <li><a href="{{ url_for('admin_login') }}">Studio login</a></li>
+          <li><a href="mailto:hello@kuttystories.in">hello@kuttystories.in</a></li>
+          <li>+91 98470 12345 &middot; Kochi, Kerala</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">&copy; {{ current_year }} KuttyStories Photography. Crafted in Kerala.</div>
+  </div>
+</footer>
+
+</body>
+</html>

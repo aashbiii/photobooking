@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Portfolio — KuttyStories{% endblock %}
+{% block content %}
+
+<section style="padding-bottom:0;">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <h2>Portfolio</h2>
+        <p>Moments of life, love, and tradition documented across Kerala.</p>
+      </div>
+    </div>
+
+    <div class="category-filter">
+      {% for c in categories %}
+      <a class="chip {{ 'active' if c == active_category }}" href="{{ url_for('gallery', category=c) }}">{{ c }}</a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0;">
+  <div class="container">
+    {% if items %}
+    <div class="filmstrip">
+      {% for item in items %}
+      <div class="frame">
+        <img src="{{ url_for('static', filename='images/gallery/' ~ item.image_file) }}" alt="{{ item.title }} — {{ item.category }} photograph" loading="lazy">
+        <div class="frame-caption">
+          <span class="num">{{ item.category }} &middot; FRAME {{ '%03d'|format(item.id) }}</span>
+          <h4>{{ item.title }}</h4>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">No photographs in this category yet.</div>
+    {% endif %}
+  </div>
+</section>
+
+{% endblock %}

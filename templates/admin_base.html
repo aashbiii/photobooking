@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="admin-topbar">
+  <div class="container">
+    <div>
+      <strong style="font-family:'Fraunces',serif; font-size:1.1rem;">Studio dashboard</strong>
+    </div>
+    <a href="{{ url_for('admin_logout') }}" class="btn btn-outline btn-sm">Log out</a>
+  </div>
+</div>
+
+<section class="admin-section">
+  <div class="container">
+    <div class="admin-tabs">
+      <a href="{{ url_for('admin_dashboard') }}" class="{{ 'active' if request.endpoint == 'admin_dashboard' }}">Overview</a>
+      <a href="{{ url_for('admin_bookings') }}" class="{{ 'active' if request.endpoint in ['admin_bookings', 'admin_edit_booking'] }}">Bookings</a>
+      <a href="{{ url_for('admin_gallery') }}" class="{{ 'active' if request.endpoint in ['admin_gallery', 'admin_add_gallery'] }}">Portfolio</a>
+    </div>
+
+    {% block admin_content %}{% endblock %}
+  </div>
+</section>
+
+<!-- Custom Delete Confirmation Modal -->
+<div class="custom-modal-backdrop" id="deleteModalBackdrop" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+  <div class="custom-modal-dialog">
+    <div class="custom-modal-header">
+      <div class="custom-modal-icon-wrap" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"></polyline>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          <line x1="10" y1="11" x2="10" y2="17"></line>
+          <line x1="14" y1="11" x2="14" y2="17"></line>
+        </svg>
+      </div>
+      <div class="custom-modal-title-group">
+        <h3 class="custom-modal-title" id="deleteModalTitle">Delete booking?</h3>
+        <p class="custom-modal-subtitle">Permanent action</p>
+      </div>
+    </div>
+
+    <div class="custom-modal-body">
+      <p class="custom-modal-prompt">Are you sure you want to permanently delete this booking request? This action cannot be undone.</p>
+      
+      <div class="custom-modal-info-box">
+        <div class="info-box-row">
+          <span class="info-box-label">Client</span>
+          <strong class="info-box-val" id="deleteModalClient">—</strong>
+        </div>
+        <div class="info-box-row">
+          <span class="info-box-label">Session type</span>
+          <span class="info-box-val" id="deleteModalSession">—</span>
+        </div>
+        <div class="info-box-row">
+          <span class="info-box-label">Shoot date</span>
+          <span class="info-box-val" id="deleteModalDate">—</span>
+        </div>
+      </div>
+    </div>
+
+    <form method="POST" action="" id="deleteModalForm" class="custom-modal-footer">
+      <button type="button" class="btn btn-ghost" id="cancelDeleteModalBtn">Keep booking</button>
+      <button type="submit" class="btn btn-danger-solid" id="confirmDeleteModalBtn">Yes, delete booking</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const modalBackdrop = document.getElementById('deleteModalBackdrop');
+    const deleteForm = document.getElementById('deleteModalForm');
+    const modalTitle = document.getElementById('deleteModalTitle');
+    const modalClient = document.getElementById('deleteModalClient');
+    const modalSession = document.getElementById('deleteModalSession');
+    const modalDate = document.getElementById('deleteModalDate');
+    const cancelBtn = document.getElementById('cancelDeleteModalBtn');
+
+    function openDeleteModal(btn) {
+      if (!modalBackdrop) return;
+      const deleteUrl = btn.getAttribute('data-url');
+      const bookingId = btn.getAttribute('data-id');
+      const clientName = btn.getAttribute('data-client') || 'Unknown';
+      const sessionName = btn.getAttribute('data-service') || 'Session';
+      const shootDate = btn.getAttribute('data-date') || 'Not specified';
+
+      if (deleteForm && deleteUrl) {
+        deleteForm.action = deleteUrl;
+      }
+      if (modalTitle && bookingId) {
+        modalTitle.textContent = `Delete booking #${bookingId}?`;
+      }
+      if (modalClient) modalClient.textContent = clientName;
+      if (modalSession) modalSession.textContent = sessionName;
+      if (modalDate) modalDate.textContent = shootDate;
+
+      modalBackdrop.classList.add('active');
+      modalBackdrop.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      if (cancelBtn) cancelBtn.focus();
+    }
+
+    function closeDeleteModal() {
+      if (!modalBackdrop) return;
+      modalBackdrop.classList.remove('active');
+      modalBackdrop.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }
+
+    document.querySelectorAll('.js-open-delete-modal').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        openDeleteModal(btn);
+      });
+    });
+
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', closeDeleteModal);
+    }
+
+    if (modalBackdrop) {
+      modalBackdrop.addEventListener('click', (e) => {
+        if (e.target === modalBackdrop) {
+          closeDeleteModal();
+        }
+      });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modalBackdrop && modalBackdrop.classList.contains('active')) {
+        closeDeleteModal();
+      }
+    });
+  });
+</script>
+
+{% endblock %}

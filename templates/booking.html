@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% block title %}Book a Session — KuttyStories{% endblock %}
+{% block content %}
+
+<section class="booking-section">
+  <div class="container booking-container">
+    <div class="booking-header">
+      <h2>Book a session</h2>
+      <p>Choose your photography experience in Kerala — we'll follow up to personalize every detail.</p>
+    </div>
+
+    <form class="booking-split-card" method="POST" action="{{ url_for('book') }}" novalidate>
+      
+      <!-- LEFT COLUMN: Choose session type -->
+      <div class="booking-left-col">
+        <div class="booking-col-heading">
+          <label class="field-label-prominent">Choose session type</label>
+          <span class="booking-counter-pill">{{ services|length }} packages</span>
+        </div>
+
+        <div class="session-vertical-list" role="radiogroup" aria-label="Session type selection">
+          {% for s in services %}
+          {% set is_selected = (s.id == preselect) or (not preselect and loop.first) %}
+          <label class="session-card-row {% if is_selected %}active{% endif %}" 
+                 for="service_{{ s.id }}"
+                 data-id="{{ s.id }}"
+                 data-name="{{ s.name }}"
+                 data-price="₹{{ '{:,}'.format(s.price|int) }}"
+                 data-duration="{{ s.duration }}">
+            <input type="radio" 
+                   id="service_{{ s.id }}" 
+                   name="service_id" 
+                   value="{{ s.id }}" 
+                   {% if is_selected %}checked{% endif %} 
+                   class="session-radio" 
+                   required>
+            
+            <div class="session-radio-circle" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+
+            <div class="session-card-details">
+              <div class="session-card-head">
+                <h4 class="session-card-title">{{ s.name }}</h4>
+                <span class="session-card-price">₹{{ '{:,}'.format(s.price|int) }}</span>
+              </div>
+              <div class="session-card-sub">
+                <span class="session-card-duration">{{ s.duration }}</span>
+                <span class="session-card-desc">{{ s.description }}</span>
+              </div>
+            </div>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: Other details entering area -->
+      <div class="booking-right-col">
+        <div class="booking-col-heading">
+          <label class="field-label-prominent">Your details</label>
+          <span class="booking-counter-pill">Kerala booking</span>
+        </div>
+
+        <div class="booking-fields-form">
+          <div class="field-row">
+            <div class="field">
+              <label for="client_name">Your name</label>
+              <input type="text" id="client_name" name="client_name" placeholder="Full name" value="{{ form.get('client_name', '') }}" required>
+            </div>
+            <div class="field">
+              <label for="phone">Phone number</label>
+              <input type="tel" id="phone" name="phone" placeholder="+91 98765 43210" value="{{ form.get('phone', '') }}" required>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="email">Email address</label>
+              <input type="email" id="email" name="email" placeholder="name@example.com" value="{{ form.get('email', '') }}" required>
+            </div>
+            <div class="field">
+              <label for="shoot_date">Preferred date</label>
+              <input type="date" id="shoot_date" name="shoot_date" value="{{ form.get('shoot_date', '') }}" required>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="location">Location / venue in Kerala</label>
+            <input type="text" id="location" name="location" placeholder="e.g. Fort Kochi, Munnar, or Alleppey" value="{{ form.get('location', '') }}" required>
+          </div>
+
+          <div class="field message-field">
+            <label for="message">Anything else we should know?</label>
+            <textarea id="message" name="message" rows="2" placeholder="Guest count, style references, timing constraints, rituals…">{{ form.get('message', '') }}</textarea>
+            <div class="field-hint">Optional — helps us prep cameras, lenses, and shot lists in advance.</div>
+          </div>
+
+          <!-- Dynamic Live Summary Bar -->
+          <div class="booking-summary-banner">
+            <div class="summary-banner-info">
+              <span class="summary-banner-eyebrow">Selected experience</span>
+              <div class="summary-banner-name-wrap">
+                <strong class="summary-banner-name" id="summaryServiceTitle">Portrait Session</strong>
+                <span class="summary-banner-dot">&middot;</span>
+                <span class="summary-banner-duration" id="summaryServiceDuration">1.5 hours</span>
+              </div>
+            </div>
+            <div class="summary-banner-price" id="summaryServicePrice">₹15,000</div>
+          </div>
+
+          <button type="submit" class="btn btn-brass btn-block booking-submit-btn">Send booking request &rarr;</button>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const cards = document.querySelectorAll('.session-card-row');
+    const summaryTitle = document.getElementById('summaryServiceTitle');
+    const summaryDuration = document.getElementById('summaryServiceDuration');
+    const summaryPrice = document.getElementById('summaryServicePrice');
+
+    function updateSummary(card) {
+      if (!card) return;
+      const name = card.getAttribute('data-name');
+      const price = card.getAttribute('data-price');
+      const duration = card.getAttribute('data-duration');
+      if (summaryTitle && name) summaryTitle.textContent = name;
+      if (summaryPrice && price) summaryPrice.textContent = price;
+      if (summaryDuration && duration) summaryDuration.textContent = duration;
+    }
+
+    // Set initial active card summary
+    const initialActive = document.querySelector('.session-card-row.active') || cards[0];
+    if (initialActive) updateSummary(initialActive);
+
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        cards.forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        const radio = card.querySelector('.session-radio');
+        if (radio) {
+          radio.checked = true;
+        }
+        updateSummary(card);
+      });
+    });
+  });
+</script>
+
+{% endblock %}

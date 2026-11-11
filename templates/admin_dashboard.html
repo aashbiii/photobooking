@@ -1,0 +1,41 @@
+{% extends "admin_base.html" %}
+{% block title %}Studio Overview{% endblock %}
+{% block admin_content %}
+
+<div class="stat-cards">
+  <div class="stat-card"><div class="n">{{ counts.get('Total', 0) }}</div><div class="label">Total bookings</div></div>
+  <div class="stat-card"><div class="n">{{ counts.get('Pending', 0) }}</div><div class="label">Awaiting confirmation</div></div>
+  <div class="stat-card"><div class="n">{{ counts.get('Confirmed', 0) }}</div><div class="label">Confirmed</div></div>
+  <div class="stat-card"><div class="n">{{ counts.get('Completed', 0) }}</div><div class="label">Completed</div></div>
+</div>
+
+<div class="section-head">
+  <div>
+    <h2 style="font-size:1.5rem;">Recent requests</h2>
+    <p>The five most recently submitted bookings.</p>
+  </div>
+  <a href="{{ url_for('admin_bookings') }}" class="btn btn-ghost btn-sm">View all bookings</a>
+</div>
+
+{% if recent %}
+<div class="table-wrap">
+  <table>
+    <thead><tr><th>#</th><th>Client</th><th>Session</th><th>Date</th><th>Status</th></tr></thead>
+    <tbody>
+      {% for b in recent %}
+      <tr>
+        <td>{{ b.id }}</td>
+        <td>{{ b.client_name }}</td>
+        <td>{{ b.service_name }}</td>
+        <td>{{ b.shoot_date }}</td>
+        <td><span class="status-pill status-{{ b.status }}">{{ b.status }}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">No bookings yet — they'll show up here as soon as someone books a session.</div>
+{% endif %}
+
+{% endblock %}

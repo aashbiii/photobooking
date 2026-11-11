@@ -1,0 +1,41 @@
+{% extends "admin_base.html" %}
+{% block title %}Add Photograph — Studio Dashboard{% endblock %}
+{% block admin_content %}
+
+<div class="section-head">
+  <div>
+    <h2 style="font-size:1.5rem;">Add a photograph</h2>
+    <p>Reference an image already placed in <code>static/images/gallery/</code>.</p>
+  </div>
+</div>
+
+<form class="form-card" method="POST" action="{{ url_for('admin_add_gallery') }}">
+  <div class="field">
+    <label for="title">Title</label>
+    <input type="text" id="title" name="title" value="{{ form.get('title', '') }}" required>
+  </div>
+
+  <div class="field-row">
+    <div class="field">
+      <label for="category">Category</label>
+      <input type="text" id="category" name="category" placeholder="e.g. Portrait, Wedding, Nature" value="{{ form.get('category', '') }}" required>
+    </div>
+    <div class="field">
+      <label for="image_file">Image filename</label>
+      <input type="text" id="image_file" name="image_file" placeholder="frame-013.jpg" value="{{ form.get('image_file', '') }}" required>
+    </div>
+  </div>
+  <div class="field-hint" style="margin:-10px 0 20px;">Upload the file into <code>static/images/gallery/</code> first, then enter its filename here.</div>
+
+  <div class="field">
+    <label for="description">Description</label>
+    <textarea id="description" name="description">{{ form.get('description', '') }}</textarea>
+  </div>
+
+  <div style="display:flex; gap:12px;">
+    <button type="submit" class="btn btn-brass">Add to portfolio</button>
+    <a href="{{ url_for('admin_gallery') }}" class="btn btn-ghost">Cancel</a>
+  </div>
+</form>
+
+{% endblock %}

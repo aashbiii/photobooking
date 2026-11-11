@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Studio Login{% endblock %}
+{% block content %}
+
+<section class="login-shell">
+  <div class="form-card" style="width:100%; max-width:400px;">
+    <h2 style="font-size:1.6rem;">Studio login</h2>
+    <p style="font-size:0.9rem; color:var(--stone-dark); margin-bottom:26px;">Restricted to the studio owner — manage bookings and the portfolio here.</p>
+    <form method="POST" action="{{ url_for('admin_login') }}">
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required autofocus>
+        <div class="field-hint">Demo password: darkroom123</div>
+      </div>
+      <button type="submit" class="btn btn-dark btn-block">Log in</button>
+    </form>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Sessions &amp; Pricing — KuttyStories{% endblock %}
+{% block content %}
+
+<section>
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <h2>Sessions &amp; pricing</h2>
+        <p>Every package includes an edited high-resolution digital gallery and full print release.</p>
+      </div>
+    </div>
+
+    <div class="grid-3">
+      {% for s in services %}
+      <div class="service-card">
+        <h3 style="font-size:1.25rem;">{{ s.name }}</h3>
+        <div class="price">₹{{ '{:,}'.format(s.price|int) }}</div>
+        <div class="duration">{{ s.duration }}</div>
+        <p class="desc">{{ s.description }}</p>
+        <a href="{{ url_for('book', service_id=s.id) }}" class="btn btn-brass btn-sm" style="margin-top:18px;">Book this session</a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% endblock %}

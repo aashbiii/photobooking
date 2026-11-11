@@ -1,0 +1,61 @@
+{% extends "admin_base.html" %}
+{% block title %}Bookings — Studio Dashboard{% endblock %}
+{% block admin_content %}
+
+<div class="section-head">
+  <div>
+    <h2 style="font-size:1.5rem;">Bookings</h2>
+    <p>Confirm, update, or remove booking requests.</p>
+  </div>
+</div>
+
+<div class="category-filter">
+  {% for s in ['All', 'Pending', 'Confirmed', 'Completed', 'Cancelled'] %}
+  <a class="chip {{ 'active' if s == active_status }}" href="{{ url_for('admin_bookings', status=s) }}">{{ s }}</a>
+  {% endfor %}
+</div>
+
+{% if bookings %}
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th>#</th><th>Client</th><th>Session</th><th>Date</th><th>Location</th><th>Status</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for b in bookings %}
+      <tr>
+        <td>{{ b.id }}</td>
+        <td>{{ b.client_name }}<br><span style="color:var(--stone); font-size:0.82rem;">{{ b.email }}</span></td>
+        <td>{{ b.service_name }}</td>
+        <td>{{ b.shoot_date }}</td>
+        <td>{{ b.location }}</td>
+        <td><span class="status-pill status-{{ b.status }}">{{ b.status }}</span></td>
+        <td>
+          <div class="row-actions">
+            <a href="{{ url_for('admin_edit_booking', booking_id=b.id) }}" class="btn btn-ghost btn-sm">Edit</a>
+            {% if b.status == 'Pending' %}
+            <form method="POST" action="{{ url_for('admin_set_status', booking_id=b.id, new_status='Confirmed') }}">
+              <button type="submit" class="btn btn-brass btn-sm">Confirm</button>
+            </form>
+            {% endif %}
+            <button type="button" 
+                    class="btn btn-danger btn-sm js-open-delete-modal"
+                    data-id="{{ b.id }}"
+                    data-client="{{ b.client_name }}"
+                    data-service="{{ b.service_name }}"
+                    data-date="{{ b.shoot_date }}"
+                    data-url="{{ url_for('admin_delete_booking', booking_id=b.id) }}">
+              Delete
+            </button>
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">No bookings match this filter.</div>
+{% endif %}
+
+{% endblock %}

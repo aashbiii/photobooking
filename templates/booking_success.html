@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Booking Received — KuttyStories{% endblock %}
+{% block content %}
+
+<section>
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <h2>Booking request received</h2>
+        <p>Reference #{{ '%04d'|format(booking.id) }} — we'll email you at {{ booking.email }} once it's confirmed.</p>
+      </div>
+    </div>
+
+    <div class="summary-card">
+      <div class="summary-row"><span>Session</span><span>{{ booking.service_name }}</span></div>
+      <div class="summary-row"><span>Date</span><span>{{ booking.shoot_date }}</span></div>
+      <div class="summary-row"><span>Location</span><span>{{ booking.location }}</span></div>
+      <div class="summary-row"><span>Status</span><span class="status-pill status-{{ booking.status }}">{{ booking.status }}</span></div>
+      <div class="summary-row"><span>Booked by</span><span>{{ booking.client_name }}</span></div>
+    </div>
+
+    <div style="margin-top:28px;">
+      <a href="{{ url_for('gallery') }}" class="btn btn-ghost">Browse the portfolio while you wait</a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
